@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[935],{1609:e=>{e.exports=JSON.parse('{"title":"Snowplow","slug":"/category/snowplow","permalink":"/docs/category/snowplow","navigation":{"previous":{"title":"Postgres","permalink":"/docs/destinations/postgresql"},"next":{"title":"GTM Configuration","permalink":"/docs/snowplow/gtm configuration"}}}')}}]);
