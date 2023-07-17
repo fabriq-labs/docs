@@ -44,13 +44,14 @@ Kineses Firehose Delivery Stream (4 Delivery Streams, US East 1 — Virginia)
 - snowplow-enriched-good-events-firehose
     (Source: snowplow-enriched-good-events-stream, Kinesis Data Stream | Destination: snowplow-good-events-enriched-fabriq, S3 Bucket)
 
-AWS Architecture
+# Steps to setup the Snowplow Streams
+AWS Snowplow Architecture
 
-![Alt text](image.png)
+![Alt text](./aws/image.png)
 
 This image is obtained from the following [blog](https://aswinkumar4018.medium.com/setup-snowplow-real-time-analytics-pipeline-dc8a71cd14f6).
 
-# Steps to setup the Snowplow Streams
+
 
 ## Create a Kinesis Data Streams for Snowplow Collector Output
 
@@ -62,20 +63,20 @@ This image is obtained from the following [blog](https://aswinkumar4018.medium.c
 
 - Click to Create Data stream
 
-![Alt text](image-1.png)
+![Alt text](./aws/image-1.png)
 - Enter Data stream name and Setup a Configuration then click to create data stream
 
-![Alt text](image-2.png)
+![Alt text](./aws/image-2.png)
 
 - Go to the S3 console and create the necessary buckets.
 
-![Alt text](image-9.png)
+![Alt text](./aws/image-9.png)
 
 - Once the required S3 buckets are created, proceed to set up a Data Firehose.
 
 - Click on "Create Delivery Stream" and select the data stream source as `snowplow-collected-good-events-stream` and the destination S3 bucket as `snowplow-good-events-fabriq`. Finally, create the Data Firehose.
 
-![Alt text](image-10.png)
+![Alt text](./aws/image-10.png)
 
 ## Setup Snowplow Collector Instance (Scala Stream Collector)
 
@@ -98,39 +99,39 @@ aws {
     secretKey = "your aws secretKey here"
 }
 ```
-After configuring the `config.hocon` file and setting up the desired streams and AWS credentials, you can proceed to build it into a Docker image and push it to the Amazon Elastic Container Registry (ECR).
+After configuring the `config.hocon` file and setting up the desired streams and AWS credentials, you can proceed to build it into a Docker ./aws/image and push it to the Amazon Elastic Container Registry (ECR).
 
 ### Set up a task definition
 
 - Click the "Create new Task Definition" button. Select the launch type compatibility that matches your requirements (EC2 or Fargate)
 - Fill in the mandatory fields and proceed to the next step.
 
-![Alt text](image-3.png)
+![Alt text](./aws/image-3.png)
 
 - Once all the configurations are done, save the settings.
 
-![Alt text](image-4.png)
+![Alt text](./aws/image-4.png)
 
 ### Set up a Cluster
 - Create a cluster.
 
-![Alt text](image-5.png)
+![Alt text](./aws/image-5.png)
 
 ### Set up a Service
 - Once the cluster is created, the next step is to create a service.
 
-![Alt text](image-6.png)
+![Alt text](./aws/image-6.png)
 
 - Select a compute option in the environment.
 - In the deployment configuration, choose the application type as "service" and select the previously created task definition. Depending on your requirements, you can create the desired number of tasks.
 - If you require a load balancer, configure it and create a service. Please note that it may take some time for the deployment to complete.
 
-![Alt text](image-7.png)
+![Alt text](./aws/image-7.png)
 
 - once deployed you can select the service and got to the networking tab you can find out the DNS names
 - To check if the application is running successfully, open the address and update the URL with "/health". If the response is "OK", it indicates that the app is running successfully.
 
-![Alt text](image-8.png)
+![Alt text](./aws/image-8.png)
 
 ## Setting Up Snowplow Enricher and Loader on EC2 Instance
 
@@ -138,11 +139,11 @@ To set up Snowplow Enricher and Loader on an EC2 instance, follow these steps:
 
 - Launch an EC2 instance with the desired specifications and operating system.
 
-![Alt text](image-11.png)
+![Alt text](./aws/image-11.png)
 
-![Alt text](image-12.png)
+![Alt text](./aws/image-12.png)
 
-![Alt text](image-13.png)
+![Alt text](./aws/image-13.png)
 
 - SSH into the EC2 instance using a secure terminal.
 - Install Docker and Docker Compose on your machine if you haven't already.
@@ -205,7 +206,7 @@ To set up Snowplow Enricher and Loader on an EC2 instance, follow these steps:
 ```version: "3"
 services:
   enricher:
-    image: snowplow/snowplow-enrich-kinesis:3.8.0
+    ./aws/image: snowplow/snowplow-enrich-kinesis:3.8.0
     command:
       [
         "--config",
@@ -221,7 +222,7 @@ services:
       - "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
       - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
   loader:
-    image: snowplow/snowplow-postgres-loader:0.3.3
+    ./aws/image: snowplow/snowplow-postgres-loader:0.3.3
     command:
       [
         "--config",
@@ -238,7 +239,7 @@ services:
       - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" 
 ```
       
- This `docker-compose.yml` file defines two services: `enricher` and `loader`. The `enricher` service uses the `snowplow/snowplow-enrich-kinesis:3.8.0` image, while the `loader` service uses the `snowplow/snowplow-postgres-loader:0.3.3` image. The services are configured with necessary command-line arguments, volumes for mounting local directories, and environment variables for AWS access credentials.
+ This `docker-compose.yml` file defines two services: `enricher` and `loader`. The `enricher` service uses the `snowplow/snowplow-enrich-kinesis:3.8.0` image, while the `loader` service uses the `snowplow/snowplow-postgres-loader:0.3.3` ./aws/image. The services are configured with necessary command-line arguments, volumes for mounting local directories, and environment variables for AWS access credentials.
 
 You can customize the configuration by adjusting the paths and environment variables as per your specific requirements. Once you have created the `docker-compose.yml` file, you can use it to deploy and manage the Snowplow Enricher and Loader services using Docker Compose.
 
@@ -261,7 +262,7 @@ These commands allow you to easily manage the lifecycle of your Docker Compose s
 docker ps
 ```
 
-The `docker ps` command is used to display the currently running containers. It provides information such as the container ID, image, status, ports, and names of the running containers. By running `docker ps`, you can see a list of the active containers on your Docker host.
+The `docker ps` command is used to display the currently running containers. It provides information such as the container ID, ./aws/image, status, ports, and names of the running containers. By running `docker ps`, you can see a list of the active containers on your Docker host.
 
 To view the logs of a specific container, you can use the `docker logs` command followed by the container name or ID. Here's an example:
 
